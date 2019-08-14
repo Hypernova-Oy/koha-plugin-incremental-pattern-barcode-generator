@@ -25,7 +25,7 @@ our $VERSION = "{VERSION}";
 
 our $metadata = {
     name            => 'Barcode generator',
-    author          => 'Tomás Cohen Arazi',
+    author          => 'Tomas Cohen Arazi',
     date_authored   => '2019-08-14',
     date_updated    => "1900-01-01",
     minimum_version => '18.11.00.000',
