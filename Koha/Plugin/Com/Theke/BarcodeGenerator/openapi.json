@@ -1,0 +1,54 @@
+{
+  "/barcode": {
+    "get": {
+      "x-mojo-to": "Com::Theke::BarcodeGenerator::Controller#get_barcode",
+      "operationId": "get_barcode",
+      "tags": ["barcodes"],
+      "parameters": [
+        {
+          "description": "Barcode generation information",
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "library_id": {
+                "type": "string",
+                "description": "Internal identifier for library that requests the barcode"
+              }
+            }
+          }
+        }
+      ],
+      "produces": [
+        "application/json"
+      ],
+      "responses": {
+        "200": {
+          "description": "A barcode"
+        },
+        "400": {
+          "description": "Bad request",
+          "schema": {
+              "type": "object",
+                "properties": {
+                  "error": {
+                    "description": "An explanation for the error",
+                    "type": "string"
+                  }
+                }
+          }
+        },
+        "500": {
+          "description": "Internal server error"
+        }
+      },
+      "x-koha-authorization": {
+        "permissions": {
+          "catalogue": "1"
+        }
+      }
+    }
+  }
+}
