@@ -19,6 +19,8 @@ use Modern::Perl;
 
 use base qw(Koha::Plugins::Base);
 
+use Mojo::JSON qw(decode_json);
+
 our $VERSION = "{VERSION}";
 
 our $metadata = {
