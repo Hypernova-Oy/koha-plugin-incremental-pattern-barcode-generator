@@ -21,13 +21,13 @@ use base qw(Koha::Plugins::Base);
 
 use Mojo::JSON qw(decode_json);
 
-our $VERSION = "{VERSION}";
+our $VERSION = "0.0.1";
 
 our $metadata = {
     name            => 'Barcode generator',
     author          => 'Tomás Cohen Arazi',
     date_authored   => '2019-08-14',
-    date_updated    => "1900-01-01",
+    date_updated    => "2019-08-15",
     minimum_version => '18.11.00.000',
     maximum_version => undef,
     version         => $VERSION,
@@ -47,6 +47,40 @@ sub new {
     my $self = $class->SUPER::new($args);
 
     return $self;
+}
+
+sub intranet_js {
+     my ( $self ) = @_;
+
+     return q|
+         <script>
+            $(document).ready(function(){
+                $('#cataloguing_additem_newitem #f').submit(function() {
+                    var form = this;
+                    var barcode;
+                    var library_id;
+                    $('input[name="field_value"]').each(function() {
+                        if(/tag_952_subfield_p/.test(this.id)) {
+                            barcode = this;
+                        }
+                        if(/tag_952_subfield_a/.test(this.id)) {
+                            library_id = this;
+                        }
+                    });
+                    if($(barcode).val()) return true;
+                    $.ajax('/api/v1/contrib/barcode-generator/barcode?library_id='+$(library_id).val())
+                    .then(function(res) {
+                        console.log(res);
+                    })
+                    .catch(function(err) {
+                        console.log(err);
+                    })
+
+                    return false;
+                })
+            })
+         </script>
+     |;
 }
 
 sub api_routes {

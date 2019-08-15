@@ -7,18 +7,10 @@
       "parameters": [
         {
           "description": "Barcode generation information",
-          "in": "body",
-          "name": "body",
+          "in": "query",
+          "name": "library_id",
           "required": true,
-          "schema": {
-            "type": "object",
-            "properties": {
-              "library_id": {
-                "type": "string",
-                "description": "Internal identifier for library that requests the barcode"
-              }
-            }
-          }
+          "type": "string"
         }
       ],
       "produces": [
