@@ -39,7 +39,7 @@ Method that returns the next barcode based on the configuration
 sub get_barcode {
     my $c = shift->openapi->valid_input or return;
 
-    my $body = $c->validation->param('body');
+    my $library_id = $c->validation->param('library_id');
 
     my $autoBarcodeType = C4::Context->preference("autoBarcode");
 
@@ -60,7 +60,7 @@ sub get_barcode {
     }
     elsif ( $autoBarcodeType eq 'hbyymmincr' ) {
         ($barcode) = C4::Barcodes::ValueBuilder::hbyymmincr::get_barcode($params);
-        my $library_id = $body->{library_id};
+        #my $library_id = $body->{library_id};
 
         unless ( $library_id ) {
             return $c->render(

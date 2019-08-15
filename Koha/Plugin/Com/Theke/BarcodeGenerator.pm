@@ -21,7 +21,7 @@ use base qw(Koha::Plugins::Base);
 
 use Mojo::JSON qw(decode_json);
 
-our $VERSION = "0.0.1";
+our $VERSION = "{VERSION}";
 
 our $metadata = {
     name            => 'Barcode generator',
@@ -55,11 +55,11 @@ sub intranet_js {
      return q|
          <script>
             $(document).ready(function(){
-                $('#cataloguing_additem_newitem #f').submit(function() {
-                    var form = this;
+                $('#cataloguing_additem_newitem input[type="submit"]').click(function() {
+                    var submit = this;
                     var barcode;
                     var library_id;
-                    $('input[name="field_value"]').each(function() {
+                    $('*[name="field_value"]').each(function() {
                         if(/tag_952_subfield_p/.test(this.id)) {
                             barcode = this;
                         }
@@ -70,9 +70,10 @@ sub intranet_js {
                     if($(barcode).val()) return true;
                     $.ajax('/api/v1/contrib/barcode-generator/barcode?library_id='+$(library_id).val())
                     .then(function(res) {
-                        console.log(res);
+                        $(barcode).val(res.barcode);
+                        submit.click();
                     })
-                    .catch(function(err) {
+                    .fail(function(err) {
                         console.log(err);
                     })
 
