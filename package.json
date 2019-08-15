@@ -1,6 +1,6 @@
 {
   "name": "koha-plugin-barcode-generator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Koha Barcode Generator Plugin",
   "devDependencies": {
     "gulp": "^3.9.1",
