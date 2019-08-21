@@ -52,7 +52,7 @@ sub new {
 sub intranet_js {
      my ( $self ) = @_;
 
-     return q|
+     return q%
          <script>
             $(document).ready(function(){
                 $('#cataloguing_additem_newitem input[type="submit"]').click(function() {
@@ -67,7 +67,7 @@ sub intranet_js {
                             library_id = this;
                         }
                     });
-                    if($(barcode).val()) return true;
+                    if(!barcode || $(barcode).val()) return true;
                     $.ajax('/api/v1/contrib/barcode-generator/barcode?library_id='+$(library_id).val())
                     .then(function(res) {
                         $(barcode).val(res.barcode);
@@ -81,7 +81,7 @@ sub intranet_js {
                 })
             })
          </script>
-     |;
+     %;
 }
 
 sub api_routes {
