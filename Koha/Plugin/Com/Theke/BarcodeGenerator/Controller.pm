@@ -43,9 +43,12 @@ sub get_barcode {
 
     my $autoBarcodeType = C4::Context->preference("autoBarcode");
 
+    my $barcodegenerator = Koha::Plugin::Com::Theke::BarcodeGenerator->new;
+    my $pattern = $barcodegenerator->retrieve_data('pattern');
+
     my $barcode;
 
-    my $dt     = dt_from_string;
+    my $dt     = Koha::DateUtils::dt_from_string;
     my $params = {
         year => $dt->year,
         mon  => $dt->month,
@@ -54,6 +57,9 @@ sub get_barcode {
 
     if ( $autoBarcodeType eq 'annual' ) {
         ($barcode) = C4::Barcodes::ValueBuilder::annual::get_barcode($params);
+    }
+    elsif ( $autoBarcodeType eq 'EAN13' ) {
+        ($barcode) = C4::Barcodes::ValueBuilder::EAN13::get_barcode($params);
     }
     elsif ( $autoBarcodeType eq 'incremental' ) {
         ($barcode) = C4::Barcodes::ValueBuilder::incremental::get_barcode($params);
@@ -68,8 +74,41 @@ sub get_barcode {
                 openapi => { error => "library_id mandatory for hbyymmincr algorithm" }
             );
         }
+    }
+    elsif ( $autoBarcodeType eq 'OFF' ) {
+        $barcode = $pattern;
+        unless ($pattern =~ /^([^0]*)(0+)([^0]*)/) {
+            return $c->render(
+                status  => 400,
+                openapi => { error => "Cannot parse the plugin barcode battern" }
+            );
+        }
 
-        $barcode = $library_id . $barcode; 
+        $pattern = {
+          prefix => $1 // '',
+          numberLength => length($2) // 0,
+          suffix => $3 // '',
+        };
+        my $id = 0;
+        my $dbh = C4::Context->dbh;
+
+        my $prefix = $pattern->{prefix};
+        my $suffix = $pattern->{suffix};
+        my $prefixLength = length($prefix);
+        my $suffixLength = length($suffix);
+        my $substrLength = (length($barcode)-$prefixLength-$suffixLength);
+        my $sth = $dbh->prepare("SELECT MAX(CAST(SUBSTRING(barcode,($prefixLength+1),$substrLength) AS signed)) AS number FROM items WHERE barcode REGEXP ?");
+        $sth->execute("^".$prefix."(\\d{".$pattern->{numberLength}."})".$suffix.'$');
+        while (my ($count)= $sth->fetchrow_array) {
+            $id = $count if $count;
+        }
+
+        $id++;
+        my $zeroesNeeded = $pattern->{numberLength} - length($id);
+        $barcode = $prefix.
+          substr('00000000000000000000', 0, $zeroesNeeded).
+          $id.
+          $suffix;
     }
     else {
         return $c->render( status => 400, openapi => { error => "Unsupported barcode algorithm" } );

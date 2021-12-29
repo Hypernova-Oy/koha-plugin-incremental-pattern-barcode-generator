@@ -21,13 +21,13 @@ use base qw(Koha::Plugins::Base);
 
 use Mojo::JSON qw(decode_json);
 
-our $VERSION = "{VERSION}";
+our $VERSION = "21.12.29.5";
 
 our $metadata = {
     name            => 'Barcode generator',
-    author          => 'Tomás Cohen Arazi',
+    author          => 'Tomás Cohen Arazi / Lari Taskula',
     date_authored   => '2019-08-14',
-    date_updated    => "2019-08-15",
+    date_updated    => "2021-12-29",
     minimum_version => '18.11.00.000',
     maximum_version => undef,
     version         => $VERSION,
@@ -98,5 +98,31 @@ sub api_namespace {
     
     return 'barcode-generator';
 }
+
+sub configure {
+    my ( $self, $args ) = @_;
+    my $cgi = $self->{'cgi'};
+
+    unless ( $cgi->param('save') ) {
+        my $template = $self->get_template( { file => 'configure.tt' } );
+
+        ## Grab the values we already have for our settings, if any exist
+        $template->param(
+            pattern => $self->retrieve_data('pattern'),
+        );
+
+        $self->output_html( $template->output() );
+    }
+    else {
+        $self->store_data(
+            {
+                pattern => $cgi->param('pattern'),
+            }
+        );
+        $self->go_home();
+    }
+}
+
+sub uninstall {}
 
 1;
