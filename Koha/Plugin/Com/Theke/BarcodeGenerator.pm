@@ -21,7 +21,7 @@ use base qw(Koha::Plugins::Base);
 
 use Mojo::JSON qw(decode_json);
 
-our $VERSION = "21.12.29.5";
+our $VERSION = "22.01.05.1";
 
 our $metadata = {
     name            => 'Barcode generator',
