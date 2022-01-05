@@ -57,8 +57,10 @@ sub intranet_js {
             $(document).ready(function(){
                 $('#cataloguing_additem_newitem input[type="submit"]').click(function() {
                     var submit = this;
-                    var barcode;
-                    var library_id;
+                    var barcode = $("div#subfield952p input[name=items\\\\.barcode]");
+                    var library_id = $("div#subfield952a select[name=items\\\\.homebranch]");
+
+                    // Koha 21.05 and below support BEGIN
                     $('*[name="field_value"]').each(function() {
                         if(/tag_952_subfield_p/.test(this.id)) {
                             barcode = this;
@@ -67,6 +69,8 @@ sub intranet_js {
                             library_id = this;
                         }
                     });
+                    // Koha 21.05 and below support END
+
                     if(!barcode || $(barcode).val()) return true;
                     $.ajax('/api/v1/contrib/barcode-generator/barcode?library_id='+$(library_id).val())
                     .then(function(res) {
