@@ -106,7 +106,7 @@ sub intranet_js {
                     });
                     // Koha 21.05 and below support END
 
-                    if(!barcode || $(barcode).val()) return true;
+                    if(!barcode.length || $(barcode).val()) return true;
                     $.ajax('/api/v1/contrib/barcode-generator/barcode?library_id='+$(library_id).val())
                     .then(function(res) {
                         $(barcode).val(res.barcode);
