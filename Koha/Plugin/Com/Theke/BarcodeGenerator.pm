@@ -21,13 +21,13 @@ use base qw(Koha::Plugins::Base);
 
 use Mojo::JSON qw(decode_json);
 
-our $VERSION = "22.01.05.1";
+our $VERSION = "22.04.13.1";
 
 our $metadata = {
     name            => 'Barcode generator',
     author          => 'Tomás Cohen Arazi / Lari Taskula',
     date_authored   => '2019-08-14',
-    date_updated    => "2021-12-29",
+    date_updated    => "2022-04-13",
     minimum_version => '18.11.00.000',
     maximum_version => undef,
     version         => $VERSION,
