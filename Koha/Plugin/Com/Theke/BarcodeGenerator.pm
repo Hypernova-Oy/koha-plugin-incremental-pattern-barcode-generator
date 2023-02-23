@@ -20,14 +20,16 @@ use Modern::Perl;
 use base qw(Koha::Plugins::Base);
 
 use Mojo::JSON qw(decode_json);
+use YAML;
+use Try::Tiny;
 
-our $VERSION = "22.04.13.1";
+our $VERSION = "22.11.01.1";
 
 our $metadata = {
     name            => 'Barcode generator',
     author          => 'Tomás Cohen Arazi / Lari Taskula',
     date_authored   => '2019-08-14',
-    date_updated    => "2022-04-13",
+    date_updated    => "2023-02-23",
     minimum_version => '18.11.00.000',
     maximum_version => undef,
     version         => $VERSION,
@@ -50,9 +52,15 @@ sub new {
 }
 
 sub generate_incremental_pattern_barcode {
-    my ( $self ) = @_;
+    my ( $self, $params ) = @_;
 
-    my $pattern = $self->retrieve_data('pattern');
+    my $yaml;
+    try {
+        $yaml = YAML::XS::Load($self->retrieve_data('pattern'));
+    } catch {
+        return "ERR_YAML_PARSE.$@";
+    };
+    my $pattern = $yaml->{$params->{'library_id'}} ? $yaml->{$params->{'library_id'}} : $yaml->{'Default'};
     my $barcode = $pattern;
 
     return 'ERR_CANNOT_PARSE_PATTERN' unless ($pattern =~ /^([^0]*)(0+)([^0]*)/);

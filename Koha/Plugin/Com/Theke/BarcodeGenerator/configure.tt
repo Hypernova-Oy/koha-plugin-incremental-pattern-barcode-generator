@@ -20,10 +20,19 @@
 
         <p>
         <label for="pattern">Pattern: </label>
-        <input type="text" name="pattern" value="[% pattern %]" />
+        <textarea name="pattern">
+          [% pattern %]
+        </textarea>
         </p>
 
-        <p>Example pattern: PREFIX000000000SUFFIX</p>
+        <p>Example pattern:
+
+<pre>
+Default: PREFIX000000000SUFFIX
+LIB_CODE: LIB000000000
+LIB2_CODE: LIBTWO000000000SUFF
+</pre>
+        </p>
 
         <p>
         <input type="hidden" name="save" value="1" />

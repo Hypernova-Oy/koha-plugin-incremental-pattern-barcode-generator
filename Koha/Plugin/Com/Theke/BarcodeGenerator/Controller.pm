@@ -51,7 +51,8 @@ sub get_barcode {
     my $params = {
         year => $dt->year,
         mon  => $dt->month,
-        day  => $dt->day
+        day  => $dt->day,
+        library_id => $library_id,
     };
 
     if ( $autoBarcodeType eq 'annual' ) {
@@ -75,12 +76,19 @@ sub get_barcode {
         }
     }
     elsif ( $autoBarcodeType eq 'OFF' ) {
-        $barcode = $barcodegenerator->generate_incremental_pattern_barcode();
+        $barcode = $barcodegenerator->generate_incremental_pattern_barcode($params);
 
         if ( $barcode eq 'ERR_CANNOT_PARSE_PATTERN' ) {
             return $c->render(
                 status  => 400,
                 openapi => { error => "Cannot parse the plugin barcode battern" }
+            );
+        }
+        if ( $barcode =~ /^ERR_YAML_PARSE/ ) {
+            $barcode =~ s/ERR_YAML_PARSE\.//;
+            return $c->render(
+                status  => 400,
+                openapi => { error => "Cannot parse the plugin barcode battern - $barcode" }
             );
         }
     }
