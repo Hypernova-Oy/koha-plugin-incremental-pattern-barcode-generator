@@ -23,7 +23,7 @@ use Mojo::JSON qw(decode_json);
 use YAML;
 use Try::Tiny;
 
-our $VERSION = "22.11.01.1";
+our $VERSION = "22.11.01.2";
 
 our $metadata = {
     name            => 'Barcode generator',
