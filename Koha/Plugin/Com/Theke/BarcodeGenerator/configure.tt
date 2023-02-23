@@ -20,9 +20,7 @@
 
         <p>
         <label for="pattern">Pattern: </label>
-        <textarea name="pattern">
-          [% pattern %]
-        </textarea>
+        <textarea name="pattern">[% pattern %]</textarea>
         </p>
 
         <p>Example pattern:
