@@ -23,3 +23,8 @@ System preference "autoBarcode" must be "not generated automatically." (FIXME)
 "PRE" is desired prefix, "SUF" is desired SUF, and 000000000000 represents
 the amount of numbers your barcode has (length of barcode excluding prefix
 and suffix).
+
+## Known issues
+
+Suffix does not work when adding multiple copies of an item. Thus we do not
+recommend using suffix.
